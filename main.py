@@ -1,7 +1,10 @@
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from typing import Optional
 from models.popularity import get_popular_movies, get_popularity_stats
+from models.content_based_recommendation import get_similar_movies, search_movies, \
+    initialize_content_model
 from utils.data_loader import data_loader
 
 # Create FastAPI app instance
@@ -27,11 +30,25 @@ async def startup_event():
     print("=" * 50)
     print("Starting Movie Recommender API...")
     data_loader.load_data()
+
+    # Initialize content-based model (precompute similarity matrix)
+    initialize_content_model()
+
     print("API ready! 🚀")
     print("=" * 50)
 
 
-# Health check endpoint
+# Pydantic models for request/response
+class RecommendationRequest(BaseModel):
+    movie_title: str
+    num_recommendations: int = 10
+
+
+class MovieSearchQuery(BaseModel):
+    query: str
+    limit: int = 10
+
+
 @app.get("/")
 async def root():
     return {
@@ -39,10 +56,11 @@ async def root():
         "version": "1.0.0",
         "endpoints": {
             "popular": "/api/popular",
+            "similar": "/api/similar_movies",
+            "search": "/api/search",
             "stats": "/api/stats"
         }
     }
-
 
 # API 1: Get popular movies
 @app.get("/api/popular")
@@ -88,8 +106,70 @@ async def get_stats():
         raise HTTPException(status_code=500,
                             detail=f"Error fetching stats: {str(e)}")
 
-# API 2: Content-based recommendation (placeholder - we'll implement next)
-# @app.post("/api/recommend")
-# async def recommend_movies(request: RecommendationRequest):
-#     """Get content-based recommendations for a given movie"""
-#     pass
+
+# Pydantic model for request body
+class RecommendationRequest(BaseModel):
+    movie_title: str
+    num_recommendations: int = 10
+
+
+# API 2: Content-based recommendation
+@app.post("/api/similar/movies")
+async def similar_movies(request: RecommendationRequest):
+    """
+    Get content-based movie recommendations
+
+    - **movie_title**: Title of the movie (case-insensitive, partial match supported)
+    - **num_recommendations**: Number of recommendations to return (1-50)
+    """
+    # Validate num_recommendations
+    if request.num_recommendations < 1 or request.num_recommendations > 50:
+        raise HTTPException(
+            status_code=400,
+            detail="num_recommendations must be between 1 and 50"
+        )
+
+    try:
+        result = get_similar_movies(
+            movie_title=request.movie_title,
+            num_recommendations=request.num_recommendations
+        )
+
+        return {
+            "success": True,
+            "query": request.movie_title,
+            "matched_movie": result["query_movie"],
+            "count": len(result["recommendations"]),
+            "recommendations": result["recommendations"]
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500,
+                            detail=f"Error fetching similar movies: {str(e)}")
+
+
+# API 3: Search movies (for autocomplete)
+@app.get("/api/search")
+async def search_movies_endpoint(
+        query: str = Query(..., min_length=1, description="Search query"),
+        limit: int = Query(10, ge=1, le=50, description="Maximum results")
+):
+    """
+    Search for movies by title (for autocomplete/search functionality)
+
+    - **query**: Search string (case-insensitive)
+    - **limit**: Maximum number of results (1-50)
+    """
+    try:
+        results = search_movies(query=query, limit=limit)
+
+        return {
+            "success": True,
+            "query": query,
+            "count": len(results),
+            "results": results
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500,
+                            detail=f"Error searching movies: {str(e)}")
