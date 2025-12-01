@@ -177,15 +177,6 @@ const ContentBased: React.FC = () => {
 					</div>
 				)}
 
-				{matchedMovie && (
-					<div className="mb-6 p-4 bg-primary/10 border border-primary/20 rounded-lg">
-						<p className="text-sm text-secondary mb-1">
-							Showing recommendations for:
-						</p>
-						<p className="text-xl font-bold text-primary">{matchedMovie}</p>
-					</div>
-				)}
-
 				{loading && (
 					<div className="text-center py-12">
 						<div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -197,7 +188,7 @@ const ContentBased: React.FC = () => {
 					<>
 						<div className="mb-4">
 							<h3 className="text-2xl font-bold text-gray-800">
-								Similar Movies ({recommendations.length})
+								({recommendations.length}) Similar Movies to {matchedMovie}
 							</h3>
 						</div>
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

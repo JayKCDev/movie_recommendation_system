@@ -11,10 +11,11 @@ const PopularMovies: React.FC = () => {
 	const [limit, setLimit] = useState<number>(10);
 	const [percentile, setPercentile] = useState<number>(0.9);
 
+	// Load initial data and stats on mount
 	useEffect(() => {
 		fetchPopularMovies();
 		fetchStats();
-	}, [limit, percentile]);
+	}, []);
 
 	const fetchPopularMovies = async (): Promise<void> => {
 		try {
@@ -84,41 +85,53 @@ const PopularMovies: React.FC = () => {
 					</div>
 				)}
 
-				<div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-					<div className="flex items-center gap-2">
-						<label
-							htmlFor="limit"
-							className="text-sm font-medium text-gray-700"
+				<div className="mb-6 p-4 bg-white rounded-lg shadow-sm">
+					<div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+						<div className="flex items-center gap-2">
+							<label
+								htmlFor="limit"
+								className="text-sm font-medium text-gray-700"
+							>
+								Number of movies:
+							</label>
+							<input
+								id="limit"
+								type="number"
+								min="1"
+								max="20"
+								value={limit}
+								onChange={(e) => setLimit(parseInt(e.target.value) || 10)}
+								className="w-20 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+							/>
+						</div>
+						<div className="flex items-center gap-2">
+							<label
+								htmlFor="percentile"
+								className="text-sm font-medium text-gray-700"
+							>
+								Percentile threshold:
+							</label>
+							<input
+								id="percentile"
+								type="number"
+								min="0.5"
+								max="0.99"
+								step="0.01"
+								value={percentile}
+								onChange={(e) =>
+									setPercentile(parseFloat(e.target.value) || 0.9)
+								}
+								className="w-24 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+							/>
+						</div>
+						<button
+							type="button"
+							onClick={fetchPopularMovies}
+							disabled={loading}
+							className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
 						>
-							Number of movies:
-						</label>
-						<input
-							id="limit"
-							type="number"
-							min="1"
-							max="100"
-							value={limit}
-							onChange={(e) => setLimit(parseInt(e.target.value) || 10)}
-							className="w-20 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-						/>
-					</div>
-					<div className="flex items-center gap-2">
-						<label
-							htmlFor="percentile"
-							className="text-sm font-medium text-gray-700"
-						>
-							Percentile threshold:
-						</label>
-						<input
-							id="percentile"
-							type="number"
-							min="0.5"
-							max="0.99"
-							step="0.01"
-							value={percentile}
-							onChange={(e) => setPercentile(parseFloat(e.target.value) || 0.9)}
-							className="w-24 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-						/>
+							{loading ? "Loading..." : "Apply Filters"}
+						</button>
 					</div>
 				</div>
 
