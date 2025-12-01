@@ -65,7 +65,7 @@ async def root():
 # API 1: Get popular movies
 @app.get("/api/popular")
 async def get_popular(
-        limit: int = Query(10, ge=1, le=100,
+        limit: int = Query(10, ge=1, le=20,
                            description="Number of movies to return"),
         percentile: float = Query(0.9, ge=0.5, le=0.99,
                                   description="Vote count percentile threshold")
