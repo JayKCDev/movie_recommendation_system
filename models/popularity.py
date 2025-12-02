@@ -77,9 +77,9 @@ def get_popularity_stats():
         Dictionary with stats
     """
     movies = data_loader.movies
-
-    m = movies["vote_count"].quantile(0.9)
-    C = movies["vote_average"].mean()
+    # Cast numpy.float32 back to python native float32 to fix jsonable_encoder FastAPI error
+    m = float(movies["vote_count"].quantile(0.9))
+    C = float(movies["vote_average"].mean())
     qualified_count = len(movies[movies["vote_count"] >= m])
 
     return {

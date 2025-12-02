@@ -6,7 +6,7 @@ const Header: React.FC = () => {
 			<div className="max-w-7xl mx-auto px-6 py-4">
 				<div className="flex items-center justify-between">
 					<h1 className="text-3xl font-bold text-primary">
-						🎬 Movie Recommendation System
+						MovieMind AI
 					</h1>
 					<nav className="hidden md:flex gap-4">
 						<a

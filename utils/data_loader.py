@@ -20,12 +20,15 @@ class DataLoader:
             data_path = Path(__file__).parent.parent / "data"
 
             print("Loading datasets...")
-            self._movies = pd.read_csv(data_path / "movies.csv")
+            movies_columns_to_import = ["id", "title", "overview", "release_date", "keywords", "genres", "vote_average",
+         "vote_count"]
+            self._movies = pd.read_csv(data_path / "movies.csv", usecols=movies_columns_to_import, dtype={"vote_count": 'int32', "vote_average": "float32"})
             self._ratings = pd.read_csv(data_path / "ratings.csv")
-            self._credits = pd.read_csv(data_path / "credits.csv")
             print(f"✓ Loaded {len(self._movies)} movies")
             print(f"✓ Loaded {len(self._ratings)} ratings")
-            print(f"✓ Loaded {len(self._credits)} credits")
+            # Commented out for future use/reference
+            # self._credits = pd.read_csv(data_path / "credits.csv")
+            # print(f"✓ Loaded {len(self._credits)} credits")
 
     @property
     def movies(self):
