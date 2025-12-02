@@ -14,10 +14,9 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS middleware for React frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify your frontend domain
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -173,3 +172,7 @@ async def search_movies_endpoint(
     except Exception as e:
         raise HTTPException(status_code=500,
                             detail=f"Error searching movies: {str(e)}")
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
