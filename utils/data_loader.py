@@ -1,6 +1,9 @@
 import pandas as pd
 from pathlib import Path
 
+credits_csv_raw_url = "https://media.githubusercontent.com/media/JayKCDev/movie_recommendation_system/refs/heads/main/data/credits.csv"
+movies_csv_raw_url = "https://media.githubusercontent.com/media/JayKCDev/movie_recommendation_system/refs/heads/main/data/movies.csv"
+ratings_csv_raw_url = "https://media.githubusercontent.com/media/JayKCDev/movie_recommendation_system/refs/heads/main/data/ratings.csv"
 
 class DataLoader:
     """Singleton class to load datasets once at startup"""
@@ -22,8 +25,8 @@ class DataLoader:
             print("Loading datasets...")
             movies_columns_to_import = ["id", "title", "overview", "release_date", "keywords", "genres", "vote_average",
          "vote_count"]
-            self._movies = pd.read_csv(data_path / "movies.csv", usecols=movies_columns_to_import, dtype={"vote_count": 'int32', "vote_average": "float32"})
-            self._ratings = pd.read_csv(data_path / "ratings.csv")
+            self._movies = pd.read_csv(movies_csv_raw_url, usecols=movies_columns_to_import, dtype={"vote_count": 'int32', "vote_average": "float32"})
+            self._ratings = pd.read_csv(ratings_csv_raw_url)
             print(f"✓ Loaded {len(self._movies)} movies")
             print(f"✓ Loaded {len(self._ratings)} ratings")
             # Commented out for future use/reference

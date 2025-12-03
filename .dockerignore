@@ -17,6 +17,10 @@ ENV/
 .vscode/
 .idea/
 
+# datasets
+data/
+*.csv
+
 # Frontend
 client/
 node_modules/
