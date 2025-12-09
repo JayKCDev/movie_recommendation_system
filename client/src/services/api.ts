@@ -7,47 +7,43 @@ import type {
 	ApiError,
 } from "../types";
 
-// const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-const API_BASE_URL = "https://jay-kc-dev-ai-movie-recommender-system.hf.space";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-console.log("[API] VITE_API_URL =", import.meta.env.VITE_API_URL);
-console.log("[API] API_BASE_URL =", API_BASE_URL);
+console.log("[API] Using API URL:", API_BASE_URL);
 
 const api = axios.create({
 	baseURL: `${API_BASE_URL}/api`,
 	headers: {
 		"Content-Type": "application/json",
 	},
+	timeout: 30000, // 30 second timeout
 });
 
-api.interceptors.request.use((config) => {
-	console.log("[API] REQUEST", {
-		baseURL: config.baseURL,
-		url: config.url,
-		method: config.method,
-		params: config.params,
-	});
-	return config;
-});
+api.interceptors.request.use(
+	(config) => {
+		console.log(
+			`[API] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`
+		);
+		return config;
+	},
+	(error) => {
+		console.error("[API] Request error:", error);
+		return Promise.reject(error);
+	}
+);
 
 api.interceptors.response.use(
 	(response) => {
-		console.log("[API] RESPONSE", {
-			baseURL: response.config.baseURL,
-			url: response.config.url,
-			status: response.status,
-		});
+		console.log(`[API] ✓ ${response.status} ${response.config.url}`);
 		return response;
 	},
 	(error) => {
 		if (error.response) {
-			console.log("[API] ERROR RESPONSE", {
-				url: error.response.config.baseURL + error.response.config.url,
-				status: error.response.status,
-				data: error.response.data,
-			});
+			console.error(`[API] ✗ ${error.response.status} ${error.config?.url}`);
+		} else if (error.request) {
+			console.error("[API] ✗ No response received:", error.message);
 		} else {
-			console.log("[API] ERROR NO RESPONSE", error.message);
+			console.error("[API] ✗ Request setup error:", error.message);
 		}
 		return Promise.reject(error);
 	}
