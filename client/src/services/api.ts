@@ -9,12 +9,48 @@ import type {
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
+console.log("[API] VITE_API_URL =", import.meta.env.VITE_API_URL);
+console.log("[API] API_BASE_URL =", API_BASE_URL);
+
 const api = axios.create({
 	baseURL: `${API_BASE_URL}/api`,
 	headers: {
 		"Content-Type": "application/json",
 	},
 });
+
+api.interceptors.request.use((config) => {
+	console.log("[API] REQUEST", {
+		baseURL: config.baseURL,
+		url: config.url,
+		method: config.method,
+		params: config.params,
+	});
+	return config;
+});
+
+api.interceptors.response.use(
+	(response) => {
+		console.log("[API] RESPONSE", {
+			baseURL: response.config.baseURL,
+			url: response.config.url,
+			status: response.status,
+		});
+		return response;
+	},
+	(error) => {
+		if (error.response) {
+			console.log("[API] ERROR RESPONSE", {
+				url: error.response.config.baseURL + error.response.config.url,
+				status: error.response.status,
+				data: error.response.data,
+			});
+		} else {
+			console.log("[API] ERROR NO RESPONSE", error.message);
+		}
+		return Promise.reject(error);
+	}
+);
 
 /**
  * Get popular movies
@@ -26,6 +62,7 @@ export const getPopularMovies = async (
 	limit: number = 10,
 	percentile: number = 0.9
 ): Promise<PopularMoviesResponse> => {
+	console.log("[POPULAR] Calling getPopularMovies with", { limit, percentile });
 	try {
 		const response = await api.get<PopularMoviesResponse>("/popular", {
 			params: { limit, percentile },
