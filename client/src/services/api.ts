@@ -7,7 +7,8 @@ import type {
 	ApiError,
 } from "../types";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+// const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_BASE_URL = "https://jay-kc-dev-ai-movie-recommender-system.hf.space";
 
 console.log("[API] VITE_API_URL =", import.meta.env.VITE_API_URL);
 console.log("[API] API_BASE_URL =", API_BASE_URL);
