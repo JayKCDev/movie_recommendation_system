@@ -7,10 +7,10 @@ import type {
 	ApiError,
 } from "../types";
 
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 const api = axios.create({
-	baseURL: API_BASE_URL,
+	baseURL: `${API_BASE_URL}/api`,
 	headers: {
 		"Content-Type": "application/json",
 	},
@@ -27,7 +27,7 @@ export const getPopularMovies = async (
 	percentile: number = 0.9
 ): Promise<PopularMoviesResponse> => {
 	try {
-		const response = await api.get<PopularMoviesResponse>("/api/popular", {
+		const response = await api.get<PopularMoviesResponse>("/popular", {
 			params: { limit, percentile },
 		});
 		return response.data;
@@ -44,7 +44,7 @@ export const getPopularMovies = async (
 export const getPopularityStats =
 	async (): Promise<PopularityStatsResponse> => {
 		try {
-			const response = await api.get<PopularityStatsResponse>("/api/stats");
+			const response = await api.get<PopularityStatsResponse>("/stats");
 			return response.data;
 		} catch (error) {
 			console.error("Error fetching stats:", error);
@@ -63,13 +63,10 @@ export const getSimilarMovies = async (
 	numRecommendations: number = 10
 ): Promise<SimilarMoviesResponse> => {
 	try {
-		const response = await api.post<SimilarMoviesResponse>(
-			"/api/similar/movies",
-			{
-				movie_title: movieTitle,
-				num_recommendations: numRecommendations,
-			}
-		);
+		const response = await api.post<SimilarMoviesResponse>("/similar/movies", {
+			movie_title: movieTitle,
+			num_recommendations: numRecommendations,
+		});
 		return response.data;
 	} catch (error) {
 		console.error("Error fetching similar movies:", error);
@@ -88,7 +85,7 @@ export const searchMovies = async (
 	limit: number = 10
 ): Promise<SearchMoviesResponse> => {
 	try {
-		const response = await api.get<SearchMoviesResponse>("/api/search", {
+		const response = await api.get<SearchMoviesResponse>("/search", {
 			params: { query, limit },
 		});
 		return response.data;
