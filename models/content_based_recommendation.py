@@ -70,7 +70,7 @@ def initialize_content_model():
 
     # Create TF-IDF vectorizer with English stop words removed
     # Stop words (the, a, an, etc.) are filtered to focus on meaningful content
-    _tfidf_vectorizer = TfidfVectorizer(stop_words="english")
+    _tfidf_vectorizer = TfidfVectorizer(stop_words="english", max_features=10000)
 
     # Weighted Concatenation Strategy:
     # Combines multiple features with different weights to create a unified text representation

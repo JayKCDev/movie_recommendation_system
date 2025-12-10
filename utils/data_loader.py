@@ -1,7 +1,7 @@
 import pandas as pd
 from pathlib import Path
 
-credits_csv_raw_url = "https://media.githubusercontent.com/media/JayKCDev/movie_recommendation_system/refs/heads/main/data/credits.csv"
+# credits_csv_raw_url = "https://media.githubusercontent.com/media/JayKCDev/movie_recommendation_system/refs/heads/main/data/credits.csv"
 movies_csv_raw_url = "https://media.githubusercontent.com/media/JayKCDev/movie_recommendation_system/refs/heads/main/data/movies.csv"
 ratings_csv_raw_url = "https://media.githubusercontent.com/media/JayKCDev/movie_recommendation_system/refs/heads/main/data/ratings.csv"
 
