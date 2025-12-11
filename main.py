@@ -1,11 +1,21 @@
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Optional
 from models.popularity import get_popular_movies, get_popularity_stats
 from models.content_based_recommendation import get_similar_movies, search_movies, \
     initialize_content_model
 from utils.data_loader import data_loader
+import os
+from dotenv import load_dotenv
+
+load_dotenv(".env")
+
+if os.path.exists(".env.local"):
+    load_dotenv(".env.local", override=True)
+
+
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS")
+allowed_origins = [origin.strip() for origin in ALLOWED_ORIGINS.split(",")]
 
 # Create FastAPI app instance
 app = FastAPI(
@@ -16,7 +26,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
