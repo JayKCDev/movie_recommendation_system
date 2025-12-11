@@ -30,7 +30,7 @@ async def startup_event():
     print("Starting Movie Recommender API...")
     data_loader.load_data()
 
-    # Initialize content-based model (precompute similarity matrix)
+    # Initialize content-based model
     initialize_content_model()
 
     print("API ready! 🚀")
