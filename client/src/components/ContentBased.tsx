@@ -91,48 +91,48 @@ const ContentBased: React.FC = () => {
 	};
 
 	return (
-		<section id="content-based" className="py-8 bg-white">
-			<div className="max-w-7xl mx-auto px-6">
-				<div className="mb-8">
-					<h2 className="text-4xl font-bold text-gray-800 mb-2">
+		<section id="content-based" className="py-6 sm:py-8 bg-white">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6">
+				<div className="mb-6 sm:mb-8">
+					<h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2">
 						Content-Based Recommendations
 					</h2>
-					<p className="text-lg text-secondary">
+					<p className="text-base sm:text-lg text-secondary">
 						Find movies similar to your favorite based on movie title and
 						description
 					</p>
 				</div>
 
-				<div className="mb-8">
+				<div className="mb-6 sm:mb-8">
 					<form onSubmit={handleSubmit} className="relative">
-						<div className="flex flex-col sm:flex-row gap-4">
+						<div className="flex flex-col gap-3 sm:gap-4">
 							<div className="flex-1 relative">
 								<input
 									type="text"
 									value={query}
 									onChange={(e) => setQuery(e.target.value)}
 									placeholder="Search for a movie (e.g., 'The Dark Knight')..."
-									className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-lg"
+									className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm sm:text-base md:text-lg"
 								/>
 								{searching && (
 									<div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-										<div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
+										<div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-primary"></div>
 									</div>
 								)}
 								{showSearchResults && searchResults.length > 0 && (
-									<div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+									<div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 sm:max-h-60 overflow-y-auto">
 										{searchResults.map((movie) => (
 											<button
 												key={movie.id}
 												type="button"
 												onClick={() => handleSearchResultClick(movie.title)}
-												className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors border-b border-gray-100 last:border-b-0"
+												className="w-full text-left px-3 sm:px-4 py-2 hover:bg-gray-100 transition-colors border-b border-gray-100 last:border-b-0"
 											>
-												<div className="font-medium text-gray-800">
+												<div className="font-medium text-sm sm:text-base text-gray-800">
 													{movie.title}
 												</div>
 												{movie.release_date && (
-													<div className="text-sm text-secondary">
+													<div className="text-xs sm:text-sm text-secondary">
 														{new Date(movie.release_date).getFullYear()}
 													</div>
 												)}
@@ -141,57 +141,59 @@ const ContentBased: React.FC = () => {
 									</div>
 								)}
 							</div>
-							<div className="flex items-center gap-2">
-								<label
-									htmlFor="numRecs"
-									className="text-sm font-medium text-gray-700 whitespace-nowrap"
+							<div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
+								<div className="flex items-center gap-2 flex-1 sm:flex-initial">
+									<label
+										htmlFor="numRecs"
+										className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap"
+									>
+										Results:
+									</label>
+									<input
+										id="numRecs"
+										type="number"
+										min="1"
+										max="50"
+										value={numRecommendations}
+										onChange={(e) =>
+											setNumRecommendations(parseInt(e.target.value) || 10)
+										}
+										className="w-full sm:w-20 px-3 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+									/>
+								</div>
+								<button
+									type="submit"
+									disabled={loading || !query.trim()}
+									className="w-full sm:w-auto px-6 py-2 sm:py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm sm:text-base"
 								>
-									Results:
-								</label>
-								<input
-									id="numRecs"
-									type="number"
-									min="1"
-									max="50"
-									value={numRecommendations}
-									onChange={(e) =>
-										setNumRecommendations(parseInt(e.target.value) || 10)
-									}
-									className="w-20 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-								/>
+									{loading ? "Loading..." : "Get Recommendations"}
+								</button>
 							</div>
-							<button
-								type="submit"
-								disabled={loading || !query.trim()}
-								className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-							>
-								{loading ? "Loading..." : "Get Recommendations"}
-							</button>
 						</div>
 					</form>
 				</div>
 
 				{error && (
-					<div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+					<div className="bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded-lg mb-6 text-sm sm:text-base">
 						{error}
 					</div>
 				)}
 
 				{loading && (
-					<div className="text-center py-12">
-						<div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-						<p className="mt-4 text-secondary">Finding similar movies...</p>
+					<div className="text-center py-8 sm:py-12">
+						<div className="inline-block animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-primary"></div>
+						<p className="mt-4 text-sm sm:text-base text-secondary">Finding similar movies...</p>
 					</div>
 				)}
 
 				{!loading && recommendations.length > 0 && (
 					<>
 						<div className="mb-4">
-							<h3 className="text-2xl font-bold text-gray-800">
-								({recommendations.length}) Similar Movies to {matchedMovie}
+							<h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">
+								({recommendations.length}) Similar Movies to <span className="break-words">{matchedMovie}</span>
 							</h3>
 						</div>
-						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
 							{recommendations.map((movie) => (
 								<MovieCard key={movie.id} movie={movie} showSimilarity={true} />
 							))}
@@ -200,7 +202,7 @@ const ContentBased: React.FC = () => {
 				)}
 
 				{!loading && !error && recommendations.length === 0 && query && (
-					<div className="text-center py-12 text-secondary">
+					<div className="text-center py-8 sm:py-12 text-secondary text-sm sm:text-base">
 						Enter a movie title above to get recommendations
 					</div>
 				)}
