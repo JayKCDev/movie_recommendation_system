@@ -6,6 +6,7 @@ from models.content_based_recommendation import get_similar_movies, search_movie
     initialize_content_model
 from utils.data_loader import data_loader
 import os
+import asyncio
 from dotenv import load_dotenv
 
 load_dotenv(".env")
@@ -32,6 +33,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Self-ping loop to keep server awake
+async def self_ping_loop():
+    """
+    Background task that periodically calls health_check to keep the server active.
+    This prevents the server from going to sleep due to inactivity.
+    """
+    PING_INTERVAL_IN_SECONDS = 10 * 60  # 600 seconds = 10 minutes
+    await asyncio.sleep(PING_INTERVAL_IN_SECONDS)  # Initial delay before first ping
+    
+    while True:
+        try:
+            # Call health_check directly
+            health_check()
+            print("[SELF-PING] ✓ Server health check successful")
+        except Exception as e:
+            print(f"[SELF-PING] ✗ Health check failed: {e}")
+        
+        # Wait for the next interval
+        await asyncio.sleep(PING_INTERVAL_IN_SECONDS)
+
 
 # Load data at startup
 @app.on_event("startup")
@@ -42,6 +63,10 @@ async def startup_event():
 
     # Initialize content-based model
     initialize_content_model()
+    
+    # Start self-ping background task
+    asyncio.create_task(self_ping_loop())
+    print("[STARTUP] Self-ping task started (10-minute interval)")
 
     print("API ready! 🚀")
     print("=" * 50)
